@@ -1,0 +1,402 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+        <title>Doctor Who Solitaire Story Game - Actions</title>
+        <style type="text/css">
+            * {font-family:sans-serif;}
+            body {background-color:lightgray; background-image:url('bg.png'); background-repeat:no-repeat; background-size: 100%;}
+            #canuse {}
+            #cannotuse {}
+            .action {float:left; border-style:dotted; border-width:3px; border-color:black; padding: 7px; margin:5px; background-color:lightgray; cursor:pointer}
+            .action_info {clear:both;}
+            .action_group_title {clear:both;}
+            .clicky {cursor:pointer; text-decoration:underline;}
+        </style>
+        
+    </head>
+    <body>
+        <div id="questions">
+            <h1>So, what has happened already? Have you...</h1>
+            <input id="plotq" type="checkbox" onchange="redraw();"> ...found the Plot?
+            <input id="enemyq" type="checkbox" onchange="redraw();"> ...met the Enemy (or know who the Enemy is)?
+            <input id="goalq" type="checkbox" onchange="redraw();"> ...discovered Enemy's Goal?
+        </div>
+
+        <div id="defeata" class="action" onclick="showMoreInfo(defeatInfo);">
+            <h2>Defeat Enemies</h2>
+            <ul>
+                <li>Unknown Factor</li>
+                <li>Enemy encounter</li>
+                <li>+1 DM</li>
+                <li>Gain Oppose</li>
+            </ul>
+        </div>
+        <div id="explorea" class="action" onclick="showMoreInfo(exploreInfo);">
+            <h2>Explore</h2>
+            <ul>
+                <li>Character event</li>
+                <li>Investigate next turn</li>
+                <li>Location event</li>
+                <li>Plot event</li>
+                <li>Important place</li>
+            </ul>
+        </div>
+        <div id="investigatea" class="action" onclick="showMoreInfo(inestigateInfo);">
+            <h2>Investigate</h2>
+            <ul>
+                <li>Location event</li>
+                <li>Plot event</li>
+                <li>+1 DM</li>
+                <li>Important place</li>
+            </ul>
+        </div>
+        <div id="movea" class="action" onclick="showMoreInfo(moveInfo);">
+            <h2>Move</h2>
+            <ul>
+                <li>Move to Location</li>
+                <li>Regroup</li>
+                <li>Follow</li>
+            </ul>
+        </div>
+        <div id="plana" class="action" onclick="showMoreInfo(planInfo);">
+            <h2>Plan</h2>
+            <ul>
+                <li>Gain Trait</li>
+                <li>Increase Quality</li>
+            </ul>
+        </div>
+        <div id="relaxa" class="action" onclick="showMoreInfo(relaxInfo);">
+            <h2>Relax</h2>
+            <ul>
+                <li>Eat</li>
+                <li>Entertainment</li>
+                <li>Tour</li>
+            </ul>
+        </div>
+        <div id="researcha" class="action" onclick="showMoreInfo(researchInfo);">
+            <h2>Research</h2>
+            <ul>
+                <li>+1 DM</li>
+                <li>Breakthrough</li>
+            </ul>
+        </div>
+        <div id="seeka" class="action" onclick="showMoreInfo(seekInfo);">
+            <h2>Seek Information</h2>
+            <ul>
+                <li>Location event</li>
+                <li>Character event</li>
+                <li>Plot event</li>
+                <li>+1 DM</li>
+                <li>Important place</li>
+                <li>Goal event</li>
+            </ul>
+        </div>
+        <div id="waita" class="action" onclick="showMoreInfo(waitInfo);">
+            <h2>Wait</h2>
+                Skip Action
+        </div>
+
+        <div>
+            <h1 class="action_group_title">These Actions can be used:</h1>
+            <div id="canuse"></div>
+        </div>
+
+        <div>
+            <h1 class="action_group_title">These Actions are situational:</h1>
+            <div class="action" onclick="showMoreInfo(escapeInfo);">
+                <h2>Escape Capture</h2>
+                See the capruting event.
+            </div>
+            <div class="action" onclick="showMoreInfo(rescueInfo);">
+                <h2>Rescue</h2>
+                When someone is captured.
+            </div>
+            <div class="action" onclick="showMoreInfo(restInfo);">
+                <h2>Rest</h2>
+                Heal wounds
+            </div>
+        </div>
+
+        <div>
+            <h1 class="action_group_title">These Actions cannot be used:</h1>
+            <div id="cannotuse"></div>
+        </div>
+
+        <div id="more_info" class="action_info"></div>
+        <p><span class="clicky" onclick="questions.scrollIntoView()">Back to top</span></p>
+        <p><a href="http://boardgamegeek.com/boardgame/42142">Doctor Who Solitaire Story Game</a> by Simon Cogan</p>
+        
+
+        <script type="text/javascript">
+            // action object c-tor
+            function action(objname, requiredAll, requiredAny, forbidden)
+            {
+                this.obj = document.getElementById(objname);
+
+                this.requiredAll = new Array();
+                for(var i = 0; i < requiredAll.length; ++i)
+                {
+                    var name = requiredAll[i];
+                    this.requiredAll.push(document.getElementById(name));
+                }
+
+                this.requiredAny = new Array();
+                for(var i = 0; i < requiredAny.length; ++i)
+                {
+                    var name = requiredAny[i];
+                    this.requiredAny.push(document.getElementById(name));
+                }
+
+                this.forbidden = new Array;
+                for(var i = 0; i < forbidden.length; ++i)
+                {
+                    var name = forbidden[i];
+                    this.forbidden.push(document.getElementById(name));
+                }
+            }
+
+            function cleanNode(node)
+            {
+                while(node.hasChildNodes())
+                    node.removeChild(node.firstChild);
+            }
+
+            function redraw()
+            {
+                cleanNode(canuse);
+                cleanNode(cannotuse);
+
+                for(var i = 0; i < actions.length; ++i)
+                {
+                    var action = actions[i];
+                    var cant = false;
+
+                    for(var j = 0; j < action.requiredAll.length; ++j)
+                    {
+                        var req = action.requiredAll[j];
+                        if(!req.checked)
+                        {
+                            cant = true;
+                            break;
+                        }
+                    }
+
+                    if(!cant && action.requiredAny.length > 0)
+                    {
+                        var found = false;
+                        for(var j = 0; j < action.requiredAny.length; ++j)
+                        {
+                            var req = action.requiredAny[j];
+                            if(req.checked)
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if(!found)
+                            cant = true;
+                    }
+
+                    if(!cant)
+                    {
+                        for(var j = 0; j < action.forbidden.length; ++j)
+                        {
+                            var forb = action.forbidden[j];
+                            if(forb.checked)
+                            {
+                                cant = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if(cant)
+                        cannotuse.appendChild(action.obj);
+                    else
+                        canuse.appendChild(action.obj);
+                }
+            }
+
+            function showMoreInfo(text)
+            {
+                moreInfo.innerHTML = "<h3>Full Info about the Action:<\/h3>" + text;
+                moreInfo.scrollIntoView();
+            }
+
+            var canuse = document.getElementById("canuse");
+            var cannotuse = document.getElementById("cannotuse");
+            var moreInfo = document.getElementById("more_info");
+
+            // setup actions matrix
+            var actions = new Array( );
+            actions.push(new action("defeata", ["enemyq", "goalq"], [], []));
+            actions.push(new action("explorea", [], [], ["enemyq"]));
+            actions.push(new action("investigatea", ["enemyq"], [], ["goalq"]));
+            actions.push(new action("movea", [], [], []));
+            actions.push(new action("plana", ["goalq"], [], []));
+            actions.push(new action("relaxa", [], [], ["plotq", "enemyq"]));
+            actions.push(new action("researcha", ["goalq"], [], []));
+            actions.push(new action("seeka", [], ["plotq", "enemyq"], ["goalq"]));
+            actions.push(new action("waita", [], [], []));
+
+            redraw();
+
+            // Full text for Actions
+            
+            defeatInfo = "<h4>R306a. Defeating Enemies<\/h4>\
+                This action is only allowed if you know the identity of the Enemy in the Adventure and their Goal. You roll 2D6 and add any Defeat Modifiers (DM) you have, with -1 if Turn 1-4, and +1 if Turn 9+.\
+                <ul>\
+                    <li>2-3: You are killed in your attempt to Defeat the Enemy - the game is over.<\/li>\
+                    <li>4: Your companion has been killed. Randomly determine which TARDIS Character is destroyed and lose 2 points. If you have no companion, you are killed and the game is over<\/li>\
+                    <li>5: You have failed to defeat the Enemy and have been captured-see e060.<\/li>\
+                    <li>6: You have failed to defeat the Enemy - lose 1 point<\/li>\
+                    <li>7: You have failed to defeat the Enemy - take a -1DM and roll immediately for an Enemy event<\/li>\
+                    <li>8-9: You have failed to Defeat the Enemy.<\/li>\
+                    <li>10: An unknown factor has emerged - see e111.<\/li>\
+                    <li>11: An opportunity arises - have an Enemy encounter or roll 1D6: 1-2: e092; 3-4: e126; 5-6: e128.<\/li>\
+                    <li>12: Confrontation - Gain a +1DM and roll for an Enemy event.<\/li>\
+                    <li>13+: You encounter the Enemy and can now Oppose even if you do not have enough DM.<\/li>\
+                <\/ul>";
+                
+            escapeInfo = "<h4>R306b. Escaping Capture<\/h4>\
+                <p>You will often get captured by various Enemies and other Characters. To\
+                escape you normally roll 2D6 and add any modifier (it is usually harder\
+                to escape bases for example), and the event will tell you the result of your\
+                escape attempt. Some events or artifacts, like a Sonic Screwdriver, will\
+                give you bonuses to Escape rolls.<\/p>\
+                <p>Characters that are captured do not have to roll for an Encounter each\
+                turn but the capture event may ask you to roll a dice to see if anything\
+                nasty has happened to you...<\/p>";
+
+            exploreInfo = "<h4>R306c. Exploring<\/h4>\
+                You decide to explore the area and see what you can discover. This Action may only be chosen if you have not yet had an Enemy event. Roll 2D6 and add +1 (max 3) for each <i>Tracking<\/i>. If you roll a natural doubles, in addition to any result below, your group becomes randomly split afterwards (see r306e).\
+                <ul>\
+                    <li>2: You encounter an Enemy - roll for an Enemy event.<\/li>\
+                    <li>3-4: You become hopelessly lost - see e078 immediately.<\/li>\
+                    <li>5: Companion in trouble - see e002.<\/li>\
+                    <li>6-7: You discover nothing unusual.<\/li>\
+                    <li>8: You meet someone - roll for a Character event.<\/li>\
+                    <li>9-10: You either discover clues that need Investigating - see r306d next turn if you wish OR make a successful Move Action next turn to roll for a Location event.<\/li>\
+                    <li>11: You discover something important - roll for a Plot event<\/li>\
+                    <li>12+: You discover something vital - see e082.<\/li>\
+                <\/ul>";
+                
+            inestigateInfo = "<h4>R306d. Investigate<\/h4>\
+                You do some investigating to try and find out more. This Action may only be chosen if indicated by an event or if\
+                you know the Enemy but not the Goal. Roll 2D6, and add +1 for each <i>Aware<\/i> (and +1 for each <i>History<\/i> if in Earth\
+                Victorian Era or earlier) - to a maximum +3. If you roll natural doubles, also see e002 before result below.\
+                <ul>\
+                    <li>2-3: You have been led into a trap and are captured - e059<\/li>\
+                    <li>4-5: You may encounter some trouble and encounter Enemies - roll for an Enemy event.<\/li>\
+                    <li>6: Your clues turn out to be false and you discover nothing.<\/li>\
+                    <li>7: You discover nothing but may investigate further next turn, adding +1 to the result (cumulative).<\/li>\
+                    <li>8: You discover a Location that could be important - roll for a Location event (If you are already at a Location then instead roll for a Plot event).<\/li>\
+                    <li>9-10: You discover some important information. Roll for a Plot event.<\/li>\
+                    <li>11: You discover vital information. Gain +1 DM<\/li>\
+                    <li>12+: You discover a vital place - see e082.<\/li>\
+                <\/ul>";
+                
+            moveInfo = "<h4>R306e. Move<\/h4>\
+                <p>If you wish your Characters to split up (or sometimes it happens without\
+                your control!), then each group of Characters may choose a separate\
+                Action (r306), and each have a separate event. If you then want them to\
+                regroup together, this must be a Move Action. Roll 2D6 and add any\
+                <i>Tracking<\/i> Traits you might have, together with any other modifier. If the\
+                result is 8+, you have joined the groups together. Each successive Move\
+                action has a +1 bonus.<\/p>\
+                <p>If you have native Allies or native Companion, you may make a Move\
+                Action to reach a Location that appears at least twice in the Adventure.<\/p>\
+                <p>A Follow action (sometimes available in Enemy encounters) is a special Move action. Roll 2D6 and add <i>Thief<\/i> and\
+                <i>Tracking<\/i> Traits but subtract the number of Characters in your group. The Enemy encounter will explain the result.<\/p>\
+                <p><i>Missing in the rulebook, but confirmed by the game designer: Move action can be used to get to any previously discovered location.<\/i><\/p>";
+
+            planInfo = "<h4>R306f. Planning<\/h4>\
+                You try to increase your chances of Defeating the Enemy. You may only choose this Action if you have had a Goal\
+                event. Decide what Quality you need to increase or what Trait you wish to gain. These only last until the Adventure\
+                ends. Roll 2D6, adding +1 for each Trait you have already have that matches your desired Trait, or +1 per\
+                Character with the desired Quality of 8 or greater (Max +3 to either roll).\
+                <ul>\
+                    <li>2-4: Dead end - you may not plan further with this Trait/Quality<\/il>\
+                    <li>5: Plan backfires - gain a -1 DM penalty.<\/il>\
+                    <li>6-7: You have no success with your plan.<\/il>\
+                    <li>8-9: You make progress - if you choose this Action next turn, get a (cumulative) extra +1 bonus.<\/il>\
+                    <li>10+: You succeed in gaining the Trait of your choice or a +4 Quality total. Increasing a Quality in this way does not add to any Character’s personal Quality totals (such as in combat).<\/il>\
+                <\/ul>";
+
+            relaxInfo = "<h4>R306g. Relax<\/h4>\
+                You decide to relax and enjoy yourselves. This Action may only be chosen at a <i>Holiday<\/i> location or if mentioned in the Adventure, and if you\
+                have not had a Plot or Enemy event. Add +1 (not cumulative) if you have a Companion that is Native to this Adventure. Roll 2D6:\
+                <ul>\
+                    <li>2: Holiday Nightmare! Lose 1 Luck point, and may not choose this Action further.<\/il>\
+                    <li>3-4: You become bored and cannot choose this Action here again.<\/il>\
+                    <li>5: Your holiday has become interrupted. You automatically have an encounter this turn.<\/il>\
+                    <li>6: Your Companion (with highest Bravery) has become bored. If this Action is chosen again, he or she will split up (r306e) and must choose another Action. If you have no Companion - see result 3-4.<\/il>\
+                    <li>7: You enjoy yourself and relax. If you choose this Action again next turn, add +1 to the roll.<\/il>\
+                    <li>8+: Have a great time. You may choose to eat (e073), some entertainment (e080), or tour (e129).<\/il>\
+                <\/ul>";
+                
+            researchInfo = "<h4>R306h. Research<\/h4>\
+                You decide to research the situation. You must have had a Goal event to choose this Action. Choose <i>Computers<\/i>,\
+                <i>Engineering<\/i>, <i>Medicine<\/i>, or <i>Science<\/i>. This Action can only be chosen in the Victorian Era or later for <i>Engineering<\/i>,\
+                <i>Medicine<\/i> or <i>Science<\/i>, the Present Era or later if <i>Computers<\/i>, and Modern Era or earlier with a <i>Temporal<\/i> event (or\
+                Enemy) for <i>History<\/i>. Roll 2D6, with +1 to the roll for each of your chosen Trait (max +3), -1 if in a Wilderness:\
+                <ul>\
+                    <li>2: Serendipity! Gain a Luck point and +1DM.<\/li>\
+                    <li>3: Explosion! Roll for each Character with chosen Trait. On a 1-2, they become Wounded.<\/li>\
+                    <li>4: Setback! Lose a Luck point.<\/li>\
+                    <li>5-7: Impasse: No result.<\/li>\
+                    <li>8-9: Slow Going. No result, but if you try again next turn, you may add +1 to result (cumulative).<\/li>\
+                    <li>10-11: Making progress. Gain a +1 DM.<\/li>\
+                    <li>12+: A breakthrough. See e083. You may not research further using this Trait in this Adventure.<\/li>\
+                <\/ul>";
+                
+            rescueInfo = "<h4>R306i. Rescue<\/h4>\
+                Some Characters - Allies or nosy Companions - may get captured by Enemies. If you have at least one Character\
+                that is not captured, you can attempt to rescue the other Characters as an Action. Roll 2D6 and add any <i>Thief<\/i>\
+                modifier (plus any Enemy DM). If the result is 9+, then you have rescued the captives. If you roll 4 or less then have\
+                an Enemy encounter. If no Enemy has been revealed, the rescuers are instead captured - see e059.";
+
+            seekInfo = "<h4>R306j. Seek Information<\/h4>\
+                You decide to try and find out more information. You must have had a Plot or Enemy (but no Goal) event and use\
+                <i>Bureaucrat<\/i> (any era), <i>Charisma<\/i> (any era but each 2 <i>Charisma<\/i> gives +1 to the roll), <i>Thief<\/i> (any era but on a result\
+                5-6 see e059), <i>History<\/i> (Modern Era or earlier), or <i>Computers<\/i> (Post-Modern Era onwards). This Action cannot be\
+                used in a <i>Wilderness<\/i> Adventure location. Roll 2D6, adding +1 to the roll for each of your chosen Trait (max +3).\
+                You may Seek Information using more than 1 Trait per Adventure, but only one at a time per group. If you roll natural doubles and there is an Enemy revealed, your encounter this turn will be an Enemy.\
+                <ul>\
+                    <li>2: You have been led into a trap and are captured - e059<\/il>\
+                    <li>3: You may encounter some trouble and encounter Enemies - roll for Enemy event.<\/il>\
+                    <li>4: Your sources dry up - you may not Seek Information using this Trait again in this adventure.<\/il>\
+                    <li>5-6: Your clues turn out to be false and you discover nothing.<\/il>\
+                    <li>7: You discover nothing this turn, but may seek further next turn, adding +1 to the result.<\/il>\
+                    <li>8: You may either roll for a Location event or a Character event.<\/il>\
+                    <li>9: You discover some important information. Roll for a Plot event.<\/il>\
+                    <li>10: You discover vital information. Gain +1 DM.<\/il>\
+                    <li>11: You hear of an important place - see e082.<\/il>\
+                    <li>12+: Discover the Enemy plan - roll for a Goal (revealing Enemy if necessary). Gain 1 Luck point.<\/il>\
+                <\/ul>";
+                
+            restInfo = "<h4>R310. Rest & Healing Wounds<\/h4>\
+                <p>You and your group may choose to Rest as an Action to try and heal\
+                your wounds. Certain events or equipment can also help you heal.<\/p>\
+                <p><strong>Healing Wounds:<\/strong> A Character with Medicine may make a Medicine\
+                10 roll to either heal a Wound or turn a Serious Wound into a Wound. If\
+                there is more than one person with Medicine in your group, they may\
+                either try separately or combine their Traits. A Character with Medicine\
+                may try to heal himself, although has the modifier if Seriously Wounded.<\/p>\
+                <p>At the end of each Adventure, all TARDIS Characters heal one level.<\/p>\
+                <p><strong>Radiation Wounds:<\/strong> A wound received through radiation cannot be healed normally. It remains a wound\
+                regardless of rest taken, until either an event or item provides a cure, or the Character dies.<\/p>\
+                <p><strong>Regeneration:<\/strong> If, as the Doctor, you have to regenerate, then you lose all Luck points, and then return as a\
+                different incarnation of the Doctor. You have to choose your Qualities and Traits as if starting the game again -\
+                see r301. Also roll 1D6+1. For this amount of turns you are -2 to all Quality and Trait rolls.<\/p>\
+                <p><strong>Disease<\/strong>: A Character that is affected by a Disease event may or may not be able to heal any effects given by the\
+                Disease. See the event for the exact details.<\/p>";
+
+            waitInfo = "<h4>Wait<\/h4>Skip action and roll for an encounter (r307), adding +1 to the 2D6 roll";
+        </script>
+    </body>
+</html>
+
