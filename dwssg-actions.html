@@ -9,22 +9,33 @@
             body {background-color:lightgray; background-image:url('bg.png'); background-repeat:no-repeat; background-size: 100%;}
             #canuse {}
             #cannotuse {}
-            .action {float:left; border-style:dotted; border-width:3px; border-color:black; padding: 7px; margin:5px; background-color:lightgray; cursor:pointer}
+            .question {display:inline-block;}
+            .action {display:inline-block; vertical-align: top; border-style:dotted; border-width:3px; border-color:black; padding: 7px; margin:5px; background-color:lightgray; cursor:pointer;}
             .action_info {clear:both;}
             .action_group_title {clear:both;}
             .clicky {cursor:pointer; text-decoration:underline;}
+            .opt_action_group {display:inline-block;}
         </style>
         
     </head>
     <body>
         <div id="questions">
             <h1>So, what has happened already? Have you...</h1>
-            <input id="plotq" type="checkbox" onclick="redraw()"> ...found the Plot?
-            <input id="enemyq" type="checkbox" onclick="redraw()"> ...met the Enemy (or know who the Enemy is)?
-            <input id="goalq" type="checkbox" onclick="redraw()"> ...discovered Enemy's Goal?
+            <span class="question">
+                <input id="plotq" type="checkbox" onclick="redraw()">
+                ...found the Plot?
+            </span>
+            <span class="question">
+                <input id="enemyq" type="checkbox" onclick="redraw()">
+                ...met the Enemy (or know who the Enemy is)?
+            </span>
+            <span class="question">
+                <input id="goalq" type="checkbox" onclick="redraw()">
+                ...discovered Enemy's Goal?
+            </span>
         </div>
 
-        <div id="defeata" class="action" onclick="showMoreInfo(defeatInfo);">
+        <div id="defeata" class="action">
             <h2>Defeat Enemies</h2>
             <ul>
                 <li>Unknown Factor</li>
@@ -33,7 +44,8 @@
                 <li>Gain Oppose</li>
             </ul>
         </div>
-        <div id="explorea" class="action" onclick="showMoreInfo(exploreInfo);">
+        
+        <div id="explorea" class="action">
             <h2>Explore</h2>
             <ul>
                 <li>Character event</li>
@@ -43,7 +55,8 @@
                 <li>Important place</li>
             </ul>
         </div>
-        <div id="investigatea" class="action" onclick="showMoreInfo(inestigateInfo);">
+        
+        <div id="investigatea" class="action">
             <h2>Investigate</h2>
             <ul>
                 <li>Location event</li>
@@ -52,7 +65,8 @@
                 <li>Important place</li>
             </ul>
         </div>
-        <div id="movea" class="action" onclick="showMoreInfo(moveInfo);">
+        
+        <div id="movea" class="action">
             <h2>Move</h2>
             <ul>
                 <li>Move to Location</li>
@@ -60,14 +74,16 @@
                 <li>Follow</li>
             </ul>
         </div>
-        <div id="plana" class="action" onclick="showMoreInfo(planInfo);">
+        
+        <div id="plana" class="action">
             <h2>Plan</h2>
             <ul>
                 <li>Gain Trait</li>
                 <li>Increase Quality</li>
             </ul>
         </div>
-        <div id="relaxa" class="action" onclick="showMoreInfo(relaxInfo);">
+        
+        <div id="relaxa" class="action">
             <h2>Relax</h2>
             <ul>
                 <li>Eat</li>
@@ -75,14 +91,16 @@
                 <li>Tour</li>
             </ul>
         </div>
-        <div id="researcha" class="action" onclick="showMoreInfo(researchInfo);">
+        
+        <div id="researcha" class="action">
             <h2>Research</h2>
             <ul>
                 <li>+1 DM</li>
                 <li>Breakthrough</li>
             </ul>
         </div>
-        <div id="seeka" class="action" onclick="showMoreInfo(seekInfo);">
+        
+        <div id="seeka" class="action">
             <h2>Seek Information</h2>
             <ul>
                 <li>Location event</li>
@@ -93,11 +111,34 @@
                 <li>Goal event</li>
             </ul>
         </div>
-        <div id="waita" class="action" onclick="showMoreInfo(waitInfo);">
+        
+        <div id="waita" class="action">
             <h2>Wait</h2>
                 Skip Action
         </div>
+        
+        <div id="conflicta" class="action">
+            <h2>Conflict</h2>
+            <ul>
+                <li>Enter Enemy base</li>
+                <li>Enemy encounter</li>
+                <li>Use <i>Demolitions</i></li>
+                <li>Use <i>Domination</i></li>
+                <li>Use <i>Marksman</i></li>
+                <li>Use <i>Poison</i></li>
+            </ul>
+        </div>
+        
+        <div id="shelpra" class="action">
+            <h2>Seek Help<br>(reinforcements)</h2>
+            Find Allies for:
+            <ul>
+                <li>Combat</li>
+                <li>Qualities/Traits</li>
+            </ul>
+        </div>
 
+        
         <div>
             <h1 class="action_group_title">These Actions can be used:</h1>
             <div id="canuse"></div>
@@ -105,17 +146,25 @@
 
         <div>
             <h1 class="action_group_title">These Actions are situational:</h1>
-            <div class="action" onclick="showMoreInfo(escapeInfo);">
+            
+            <div id="escapea" class="action">
                 <h2>Escape Capture</h2>
                 See the capruting event.
             </div>
-            <div class="action" onclick="showMoreInfo(rescueInfo);">
+            
+            <div id="rescuea" class="action">
                 <h2>Rescue</h2>
                 When someone is captured.
             </div>
-            <div class="action" onclick="showMoreInfo(restInfo);">
+            
+            <div id="resta" class="action">
                 <h2>Rest</h2>
                 Heal wounds
+            </div>
+            
+            <div id="shelpma" class="action">
+                <h2>Seek Help<br>(medical)</h2>
+                Find a physician
             </div>
         </div>
 
@@ -126,34 +175,60 @@
 
         <div id="more_info" class="action_info"></div>
         <p><span class="clicky" onclick="questions.scrollIntoView()">Back to top</span></p>
+        
+        <div>
+            <button id="opt_actions_config"></button>
+            <div id="opt_actions">
+                <h1>Select optional Actions:</h1>
+                <span class="opt_action_group">
+                    <input id="conflictgt" type="checkbox">
+                    R306k. Conflict
+                </span>
+                <span class="opt_action_group">
+                    <input id="shelpgt" type="checkbox">
+                    R306l. Seek Help
+                </span>
+            </div>
+        </div>
+        
         <p><a href="http://boardgamegeek.com/boardgame/42142">Doctor Who Solitaire Story Game</a> by Simon Cogan</p>
         
 
         <script type="text/javascript">
             // action object c-tor
-            function action(objname, requiredAll, requiredAny, forbidden)
+            function action(objname, infoText, isDynamic, requiredAll, requiredAny, forbidden)
             {
                 this.obj = document.getElementById(objname);
-
-                this.requiredAll = new Array();
-                for(var i = 0; i < requiredAll.length; ++i)
+                this.obj.onclick = 
+                    function()
+                    {
+                        showMoreInfo(infoText);
+                    }
+                    
+                this.isDynamic = isDynamic;
+                
+                if(isDynamic)
                 {
-                    var name = requiredAll[i];
-                    this.requiredAll.push(document.getElementById(name));
-                }
+                    this.requiredAll = new Array();
+                    for(var i = 0; i < requiredAll.length; ++i)
+                    {
+                        var name = requiredAll[i];
+                        this.requiredAll.push(document.getElementById(name));
+                    }
 
-                this.requiredAny = new Array();
-                for(var i = 0; i < requiredAny.length; ++i)
-                {
-                    var name = requiredAny[i];
-                    this.requiredAny.push(document.getElementById(name));
-                }
+                    this.requiredAny = new Array();
+                    for(var i = 0; i < requiredAny.length; ++i)
+                    {
+                        var name = requiredAny[i];
+                        this.requiredAny.push(document.getElementById(name));
+                    }
 
-                this.forbidden = new Array;
-                for(var i = 0; i < forbidden.length; ++i)
-                {
-                    var name = forbidden[i];
-                    this.forbidden.push(document.getElementById(name));
+                    this.forbidden = new Array;
+                    for(var i = 0; i < forbidden.length; ++i)
+                    {
+                        var name = forbidden[i];
+                        this.forbidden.push(document.getElementById(name));
+                    }
                 }
             }
 
@@ -171,6 +246,10 @@
                 for(var i = 0; i < actions.length; ++i)
                 {
                     var action = actions[i];
+                    
+                    if(!action.isDynamic)
+                        continue;
+                    
                     var cant = false;
 
                     for(var j = 0; j < action.requiredAll.length; ++j)
@@ -220,33 +299,110 @@
                 }
             }
 
-            function showMoreInfo(text)
+            function showMoreInfo(infoText)
             {
-                moreInfo.innerHTML = "<h3>Full Info about the Action:<\/h3>" + text;
+                moreInfo.innerHTML = "<h3>Full Info about the Action:<\/h3>" + infoText;
                 moreInfo.scrollIntoView();
             }
+            
+            function toggleActions(checkbox, actions)
+            {
+                for(var i = 0; i < actions.length; ++i)
+                {
+                    var act = document.getElementById(actions[i]);
+                    
+                    if(checkbox.checked)
+                    {
+                        act.style.display = "";
+                    }
+                    else
+                    {
+                        act.style.display = "none";
+                    }
+                }
+            }
+            
+            function bindOptActions(toggleCheckbox, actions)
+            {
+                var cb = document.getElementById(toggleCheckbox);
+                toggleActions(cb, actions);
+                cb.onclick =
+                    function()
+                    {
+                        toggleActions(cb, actions);
+                    }
+            }
+            
+            function hideOptActionsConfig()
+            {
+                optActions.style.display = "none";
+                optActionsConfig.innerHTML = "configure...";
+                optActionsConfig.onclick = showOptActionsConfig;
+            }
+            
+            function showOptActionsConfig()
+            {
+                optActions.style.display = "";
+                optActionsConfig.innerHTML = "hide configuration";
+                optActionsConfig.onclick = hideOptActionsConfig;
+            }
 
+            // Globals
+            
+            prepareActionInfos();
+            
+            // HTML elements
+            var questions = document.getElementById("questions");
             var canuse = document.getElementById("canuse");
             var cannotuse = document.getElementById("cannotuse");
             var moreInfo = document.getElementById("more_info");
-            var questions = document.getElementById("questions");
-
+            var optActions = document.getElementById("opt_actions");
+            var optActionsConfig = document.getElementById("opt_actions_config");
+            
             // setup actions matrix
             var actions = new Array( );
-            actions.push(new action("defeata", ["enemyq", "goalq"], [], []));
-            actions.push(new action("explorea", [], [], ["enemyq"]));
-            actions.push(new action("investigatea", ["enemyq"], [], ["goalq"]));
-            actions.push(new action("movea", [], [], []));
-            actions.push(new action("plana", ["goalq"], [], []));
-            actions.push(new action("relaxa", [], [], ["plotq", "enemyq"]));
-            actions.push(new action("researcha", ["goalq"], [], []));
-            actions.push(new action("seeka", [], ["plotq", "enemyq"], ["goalq"]));
-            actions.push(new action("waita", [], [], []));
-
+            actions.push(new action("defeata", defeatInfo, true, ["enemyq", "goalq"], [], []));
+            actions.push(new action("escapea", escapeInfo, false, null, null, null));
+            actions.push(new action("explorea", exploreInfo, true, [], [], ["enemyq"]));
+            actions.push(new action("investigatea", investigateInfo, true, ["enemyq"], [], ["goalq"]));
+            actions.push(new action("movea", moveInfo, true, [], [], []));
+            actions.push(new action("plana", planInfo, true, ["goalq"], [], []));
+            actions.push(new action("relaxa",relaxInfo, true, [], [], ["plotq", "enemyq"]));
+            actions.push(new action("researcha", researchInfo, true, ["goalq"], [], []));
+            actions.push(new action("rescuea", rescueInfo, false, null, null, null));
+            actions.push(new action("seeka", seekInfo, true, [], ["plotq", "enemyq"], ["goalq"]));
+            actions.push(new action("waita", waitInfo, true, [], [], []));
+            actions.push(new action("resta", restInfo, false, [], [], []));
+            actions.push(new action("conflicta", conflictInfo, true, ["goalq"], [], []));
+            actions.push(new action("shelpra", shelprInfo, true, ["goalq"], [], []));
+            actions.push(new action("shelpma", shelpmInfo, false, null, null, null));
+            
+            // setup opt‭ional actions
+            bindOptActions("conflictgt", ["conflicta"]);
+            bindOptActions("shelpgt", ["shelpma", "shelpra"]);
+            
+            hideOptActionsConfig();
             redraw();
 
             // Full text for Actions
+            var defeatInfo;
+            var escapeInfo;
+            var exploreInfo;
+            var investigateInfo;
+            var moveInfo;
+            var planInfo;
+            var relaxInfo;
+            var researchInfo;
+            var rescueInfo;
+            var seekInfo;
+            var waitInfo;
+            var restInfo;
+            var conflictInfo;
+            var shelprInfo;
+            var shelpmInfo;
             
+            function prepareActionInfos()
+            {
             defeatInfo = "<h4>R306a. Defeating Enemies<\/h4>\
                 This action is only allowed if you know the identity of the Enemy in the Adventure and their Goal. You roll 2D6 and add any Defeat Modifiers (DM) you have, with -1 if Turn 1-4, and +1 if Turn 9+.\
                 <ul>\
@@ -285,7 +441,7 @@
                     <li>12+: You discover something vital - see e082.<\/li>\
                 <\/ul>";
                 
-            inestigateInfo = "<h4>R306d. Investigate<\/h4>\
+            investigateInfo = "<h4>R306d. Investigate<\/h4>\
                 You do some investigating to try and find out more. This Action may only be chosen if indicated by an event or if\
                 you know the Enemy but not the Goal. Roll 2D6, and add +1 for each <i>Aware<\/i> (and +1 for each <i>History<\/i> if in Earth\
                 Victorian Era or earlier) - to a maximum +3. If you roll natural doubles, also see e002 before result below.\
@@ -320,23 +476,23 @@
                 ends. Roll 2D6, adding +1 for each Trait you have already have that matches your desired Trait, or +1 per\
                 Character with the desired Quality of 8 or greater (Max +3 to either roll).\
                 <ul>\
-                    <li>2-4: Dead end - you may not plan further with this Trait/Quality<\/il>\
-                    <li>5: Plan backfires - gain a -1 DM penalty.<\/il>\
-                    <li>6-7: You have no success with your plan.<\/il>\
-                    <li>8-9: You make progress - if you choose this Action next turn, get a (cumulative) extra +1 bonus.<\/il>\
-                    <li>10+: You succeed in gaining the Trait of your choice or a +4 Quality total. Increasing a Quality in this way does not add to any Character’s personal Quality totals (such as in combat).<\/il>\
+                    <li>2-4: Dead end - you may not plan further with this Trait/Quality<\/li>\
+                    <li>5: Plan backfires - gain a -1 DM penalty.<\/li>\
+                    <li>6-7: You have no success with your plan.<\/li>\
+                    <li>8-9: You make progress - if you choose this Action next turn, get a (cumulative) extra +1 bonus.<\/li>\
+                    <li>10+: You succeed in gaining the Trait of your choice or a +4 Quality total. Increasing a Quality in this way does not add to any Character’s personal Quality totals (such as in combat).<\/li>\
                 <\/ul>";
 
             relaxInfo = "<h4>R306g. Relax<\/h4>\
                 You decide to relax and enjoy yourselves. This Action may only be chosen at a <i>Holiday<\/i> location or if mentioned in the Adventure, and if you\
                 have not had a Plot or Enemy event. Add +1 (not cumulative) if you have a Companion that is Native to this Adventure. Roll 2D6:\
                 <ul>\
-                    <li>2: Holiday Nightmare! Lose 1 Luck point, and may not choose this Action further.<\/il>\
-                    <li>3-4: You become bored and cannot choose this Action here again.<\/il>\
-                    <li>5: Your holiday has become interrupted. You automatically have an encounter this turn.<\/il>\
-                    <li>6: Your Companion (with highest Bravery) has become bored. If this Action is chosen again, he or she will split up (r306e) and must choose another Action. If you have no Companion - see result 3-4.<\/il>\
-                    <li>7: You enjoy yourself and relax. If you choose this Action again next turn, add +1 to the roll.<\/il>\
-                    <li>8+: Have a great time. You may choose to eat (e073), some entertainment (e080), or tour (e129).<\/il>\
+                    <li>2: Holiday Nightmare! Lose 1 Luck point, and may not choose this Action further.<\/li>\
+                    <li>3-4: You become bored and cannot choose this Action here again.<\/li>\
+                    <li>5: Your holiday has become interrupted. You automatically have an encounter this turn.<\/li>\
+                    <li>6: Your Companion (with highest Bravery) has become bored. If this Action is chosen again, he or she will split up (r306e) and must choose another Action. If you have no Companion - see result 3-4.<\/li>\
+                    <li>7: You enjoy yourself and relax. If you choose this Action again next turn, add +1 to the roll.<\/li>\
+                    <li>8+: Have a great time. You may choose to eat (e073), some entertainment (e080), or tour (e129).<\/li>\
                 <\/ul>";
                 
             researchInfo = "<h4>R306h. Research<\/h4>\
@@ -367,16 +523,16 @@
                 used in a <i>Wilderness<\/i> Adventure location. Roll 2D6, adding +1 to the roll for each of your chosen Trait (max +3).\
                 You may Seek Information using more than 1 Trait per Adventure, but only one at a time per group. If you roll natural doubles and there is an Enemy revealed, your encounter this turn will be an Enemy.\
                 <ul>\
-                    <li>2: You have been led into a trap and are captured - e059<\/il>\
-                    <li>3: You may encounter some trouble and encounter Enemies - roll for Enemy event.<\/il>\
-                    <li>4: Your sources dry up - you may not Seek Information using this Trait again in this adventure.<\/il>\
-                    <li>5-6: Your clues turn out to be false and you discover nothing.<\/il>\
-                    <li>7: You discover nothing this turn, but may seek further next turn, adding +1 to the result.<\/il>\
-                    <li>8: You may either roll for a Location event or a Character event.<\/il>\
-                    <li>9: You discover some important information. Roll for a Plot event.<\/il>\
-                    <li>10: You discover vital information. Gain +1 DM.<\/il>\
-                    <li>11: You hear of an important place - see e082.<\/il>\
-                    <li>12+: Discover the Enemy plan - roll for a Goal (revealing Enemy if necessary). Gain 1 Luck point.<\/il>\
+                    <li>2: You have been led into a trap and are captured - e059<\/li>\
+                    <li>3: You may encounter some trouble and encounter Enemies - roll for Enemy event.<\/li>\
+                    <li>4: Your sources dry up - you may not Seek Information using this Trait again in this adventure.<\/li>\
+                    <li>5-6: Your clues turn out to be false and you discover nothing.<\/li>\
+                    <li>7: You discover nothing this turn, but may seek further next turn, adding +1 to the result.<\/li>\
+                    <li>8: You may either roll for a Location event or a Character event.<\/li>\
+                    <li>9: You discover some important information. Roll for a Plot event.<\/li>\
+                    <li>10: You discover vital information. Gain +1 DM.<\/li>\
+                    <li>11: You hear of an important place - see e082.<\/li>\
+                    <li>12+: Discover the Enemy plan - roll for a Goal (revealing Enemy if necessary). Gain 1 Luck point.<\/li>\
                 <\/ul>";
                 
             restInfo = "<h4>R310. Rest & Healing Wounds<\/h4>\
@@ -397,6 +553,89 @@
                 Disease. See the event for the exact details.<\/p>";
 
             waitInfo = "<h4>Wait<\/h4>Skip action and roll for an encounter (r307), adding +1 to the 2D6 roll";
+            
+            conflictInfo = "<h4>R306k. Conflict<\/h4>\
+                You decide to take the battle to the Enemy and try to sabotage their plans. You must have had a Goal event to\
+                choose this Action and only Characters with Bravery of at least 6 can attempt this Action. Roll 2D6 and add any\
+                <i>Tracking<\/i> and <i>Thief<\/i> Traits but subtract the number of Characters attempting the Action. Add +1 to the roll if in an\
+                Enemy Base (e144). A Companion that is <i>Independent<\/i> (using the Personality rules) gains +1 to rolls here if the\
+                Doctor is not attempting this Action.\
+                <ul>\
+                    <li>2-4: Ambushed - roll for an immediate Enemy encounter with a -1 to any Talk or Surrender options.<\/li>\
+                    <li>5: Failed opportunity - gain a -1 penalty for further Conflict Actions in this Adventure.<\/li>\
+                    <li>6: Failed opportunity - no result.<\/li>\
+                    <li>7: Opportunity - you may enter the Enemy base (see e144) if you wish. If already inside a base then see\
+                    result (8-9) below.<\/li>\
+                    <li>8-9: Opportunity and danger - you must have an automatic Enemy encounter this turn. If you choose Conflict\
+                    as an Action again next turn, gain +4 to the roll.<\/li>\
+                    <li>10+: Opportunity for conflict - you may either choose to have an Enemy encounter or choose a Character with\
+                    either: <i>Demolitions<\/i>, <i>Domination<\/i>, <i>Marksman<\/i> or <i>Poison<\/i>:\
+                    <ul>\
+                        <li><i>Demolitions<\/i> - If you can make a <i>Demolitions<\/i> 9 roll (with +1 if you have a sonic screwdriver) you can make\
+                        1D6+1 explosive devices. These can be used before a combat round and each will attack\
+                        an Enemy with a Brawn of 10. If you have at least 5 devices, they can either be used to\
+                        gain a +2DM, or if you are in an Enemy Base and can Oppose then you Defeat the Enemy.<\/li>\
+                        <li><i>Domination<\/i> - If you can make a <i>Domination<\/i> 9 roll (with +1 for each Character here with Bravery 9+) you\
+                        can take control of any non-<i>Machine<\/i> <i>Minions<\/i> that you encounter in your next Enemy\
+                        encounter. They will become your Allies until the end of the Adventure.<\/li>\
+                        <li><i>Marksman<\/i> - If you make a <i>Marksman<\/i> 9 roll (with +1 if you have at least 2 <i>Troop<\/i>) then when you have an\
+                        Enemy encounter and have to roll for the number of Enemies encountered, reduce that\
+                        number by 1D3. Roll for the 1D3 reduction each time you have a future Enemy encounter.<\/li>\
+                        <li><i>Poison<\/i> - If you make a <i>Poison<\/i> 9 roll (adding any <i>Medicine<\/i>) then you can make a gas that will temporarily\
+                        disable (treat as killed for purposes for rout) any non-<i>Machine<\/i> Enemy that fails a Bravery roll.\
+                        You may use the gas in a future Enemy encounter before you resolve an option (so you could\
+                        choose a Talk option and if this then fails, use the gas before choosing another option). Enemies\
+                        recover at the end of the encounter unless inside a Base where they will recover after 1D3 turns.<\/li>\
+                    <\/ul><\/li>\
+                <\/ul>";
+            
+            shelprInfo = "<h4>R306l. Seek Help (reinforcements)<\/h4>\
+                <p>You decide to find more help in finding reinforcements. You must have had a Goal event to choose this Action. This Action cannot be chosen at a <i>Wilderness<\/i> Adventure\
+                (unless at a Location with a Character line). Roll 2D6 and add any <i>Bureaucrat<\/i> from native Characters and +1 for\
+                every 2 <i>Charisma<\/i>. If you are at a <i>Holiday<\/i> Adventure, take -1 from the roll.<\/p>\
+                <p>Also apply the following modifiers: If on an Earth Present or Post-Modern\
+                Adventure, add +1 for each <i>UNIT<\/i> unless that Character is also a <i>Troop<\/i>. If you have a total Bravery of at least 20,\
+                add +1 to the roll. If you have had e210, take -1 from the roll. A Companion that is a Natural Leader (using the\
+                Personality rules) gains +1 to rolls here if the Doctor is not attempting this Action.<\/p>\
+                <ul>\
+                    <li>2-4: Authorities turn against you and you are arrested - see e059.<\/li>\
+                    <li>5-6: Your request for help is denied - no further effect.<\/li>\
+                    <li>7-8: Authorities need more convincing - add +1 to roll (cumulative) if you Seek Help again next turn.<\/li>\
+                    <li>9-10: You find reinforcements - see options below:\
+                    <ul>\
+                        <li>Earth (to Renaissance Era): 1D3+2 militia - Brains 2, Brawn 6, Bravery 5 (<i>Running<\/i>, <i>Tracking<\/i>, <i>Troop<\/i>)<\/li>\
+                        <li>Earth (Victorian or Modern Eras): 1D3 Police - Brains 3, Brawn 6, Bravery 5 (<i>Marksman<\/i>, <i>Tracking<\/i>, <i>Troop<\/i>)<\/li>\
+                        <li>Earth (Present or Post Modern Eras): 1D3+1 UNIT Troops - each Brains 4, Brawn 6, Bravery 6\
+                        (<i>Marksman<\/i>, <i>Running<\/i>, <i>Troop<\/i>, <i>UNIT<\/i>). If 4+ troops, then one is a UNIT Commander - Brains 5, Brawn 6,\
+                        Bravery 7 (<i>Bureaucrat<\/i>, <i>Computers<\/i>, <i>Marksman<\/i>, <i>UNIT<\/i>).<\/li>\
+                        <li>Spaceship or Space Station: 1D3+1 ship security - each Brains 3, Brawn 6, Bravery 6 (<i>Marksman<\/i>,\
+                        <i>Running<\/i>, <i>Troop<\/i>). If 4+ security, then one is instead an officer - Brains 5, Brawn 7, Bravery 7 (<i>Aware<\/i>, <i>Computers<\/i>, <i>Marksman<\/i>, <i>Running<\/i>)<\/li>\
+                        <li>Other: 1D3+1 soldiers - Brains 3, Brawn 6, Bravery 6 (<i>Marksman<\/i>, <i>Running<\/i>, <i>Tracking<\/i>, <i>Troop<\/i>). If 4+ soldiers, ones is instead a leader with Brains 5, Brawn 7 and Bravery 7 (<i>Aware<\/i>, <i>Bureaucrat<\/i>,\
+                        <i>Marksman<\/i>, <i>Running<\/i>)<\/li>\
+                    <\/ul><\/li>\
+                    <li>11+: You find reinforcements - see options above replacing 1D3 with 1D6 or see extra options below.\
+                    You may not choose this Action again in this Adventure.\
+                    <ul>\
+                        <li>Time Agents (only possible if you have had a <i>Temporal<\/i> Enemy or Goal): 1D3 agents each Brains 6,\
+                        Brawn 7, Bravery 7 (<i>Aware<\/i>, <i>History<\/i>, <i>Marksman<\/i>, <i>Pilot<\/i>, <i>Running<\/i>, <i>Thief<\/i>).<\/li>\
+                        <li>Judoon (only possible if not on Earth in Post Modern Era or earlier): 1D3+1 Judoon each Brains 2,\
+                        Brawn 8, Bravery 7 (<i>Marksman<\/i>, <i>Pilot<\/i>, <i>Tracking<\/i>, <i>Troop<\/i>). While the Judoon are with you, you have -2 to any <i>Charisma<\/i> roll.<\/li>\
+                    <\/ul><\/li>\
+            <\/ul>";
+            
+            shelpmInfo = "<h4>R306l. Seek Help (medical)<\/h4>\
+                You decide to find more help in getting medical attention. This Action cannot be chosen at a <i>Wilderness<\/i> Adventure\
+                (unless at a Location with a Character line). Roll 2D6 and add any <i>Bureaucrat<\/i> from native Characters and +1 for\
+                every 2 <i>Charisma<\/i>. If you are at a <i>Holiday<\/i> Adventure, take -1 from the roll.\
+                <ul>\
+                    <li>2-4: Authorities turn against you and you are arrested - see e059.<\/li>\
+                    <li>5-6: Your request for help is denied - no further effect.<\/li>\
+                    <li>7-8: Authorities need more convincing - add +1 to roll (cumulative) if you Seek Help again next turn.<\/li>\
+                    <li>9-10: You find a physician with <i>Medicine<\/i> who can treat your Characters normally (see r310)<\/li>\
+                    <li>11+: You find help. You may not choose this Action again in this Adventure.\
+                    Medical specialist - He can use <i>Medicine<\/i> to treat your Characters and if in Near Future Era or later has drugs that can also treat radiation Wounds as a normal Wound.<\/li>\
+                <\/ul>";
+            }
         </script>
     </body>
 </html>
