@@ -138,7 +138,68 @@
             </ul>
         </div>
 
+        <div id="exploreaca" class="action">
+            <h2>Explore Alien Culture</h2>
+            <ul>
+                <li>Character event</li>
+                <li>Investigate next turn</li>
+                <li>Location event</li>
+                <li>Plot event</li>
+                <li>Important place</li>
+            </ul>
+        </div>
+
+        <div id="exploreca" class="action">
+            <h2>Explore Corridors</h2>
+            <ul>
+                <li>Character event</li>
+                <li>Investigate next turn</li>
+                <li>Location event</li>
+                <li>Plot event</li>
+                <li>Important place</li>
+            </ul>
+        </div>
         
+        <div id="exploreha" class="action">
+            <h2>Explore History</h2>
+            <ul>
+                <li>Character event</li>
+                <li>Investigate next turn</li>
+                <li>Location event</li>
+                <li>Plot event</li>
+                <li>Important place</li>
+            </ul>
+        </div>
+
+        <div id="explorewa" class="action">
+            <h2>Explore Wilderness</h2>
+            <ul>
+                <li>Investigate next turn</li>
+                <li>Location event</li>
+                <li>Important place</li>
+            </ul>
+        </div>
+
+        <div id="meddlea" class="action">
+            <h2>Meddle</h2>
+            <ul>
+                <li>Character event</li>
+                <li>Plot event</li>
+                <li>Goal event</li>
+                <li>+1 DM, Enemy event</li>
+            </ul>
+        </div>
+
+        <div id="challengea" class="action">
+            <h2>Challenge</h2>
+            <ul>
+                <li>Goal event</li>
+                <li>+1 DM</li>
+                <li>Release captured</li>
+                <li>Goal event, weaken Enemy</li>
+            </ul>
+        </div>
+
         <div>
             <h1 class="action_group_title">These Actions can be used:</h1>
             <div id="canuse"></div>
@@ -187,6 +248,18 @@
                 <span class="opt_action_group">
                     <input id="shelpgt" type="checkbox">
                     R306l. Seek Help
+                </span>
+                <span class="opt_action_group">
+                    <input id="exploregt" type="checkbox">
+                    c007a-c007d. Expanded Explore
+                </span>
+                <span class="opt_action_group">
+                    <input id="meddlegt" type="checkbox">
+                    c007e. Meddle
+                </span>
+                <span class="opt_action_group">
+                    <input id="challengegt" type="checkbox">
+                    c007f. Challenge
                 </span>
             </div>
         </div>
@@ -376,30 +449,25 @@
             actions.push(new action("conflicta", conflictInfo, true, ["goalq"], [], []));
             actions.push(new action("shelpra", shelprInfo, true, ["goalq"], [], []));
             actions.push(new action("shelpma", shelpmInfo, false, null, null, null));
+            actions.push(new action("exploreaca", exploreacInfo, true, [], [], ["enemyq"]));
+            actions.push(new action("exploreca", explorecInfo, true, [], [], ["enemyq"]));
+            actions.push(new action("exploreha", explorehInfo, true, [], [], ["enemyq"]));
+            actions.push(new action("explorewa", explorewInfo, true, [], [], ["enemyq"]));
+            actions.push(new action("meddlea", meddleInfo, true, [], [], ["enemyq", "plotq"]));
+            actions.push(new action("challengea", challengeInfo, true, ["enemyq"], [], []));
             
-            // setup opt‭ional actions
+            // setup optional actions
             bindOptActions("conflictgt", ["conflicta"]);
             bindOptActions("shelpgt", ["shelpma", "shelpra"]);
+            bindOptActions("exploregt", ["exploreaca", "exploreca", "exploreha", "explorewa"]);
+            bindOptActions("meddlegt", ["meddlea"]);
+            bindOptActions("challengegt", ["challengea"]);
             
             hideOptActionsConfig();
             redraw();
 
             // Full text for Actions
-            var defeatInfo;
-            var escapeInfo;
-            var exploreInfo;
-            var investigateInfo;
-            var moveInfo;
-            var planInfo;
-            var relaxInfo;
-            var researchInfo;
-            var rescueInfo;
-            var seekInfo;
-            var waitInfo;
-            var restInfo;
-            var conflictInfo;
-            var shelprInfo;
-            var shelpmInfo;
+            var defeatInfo, escapeInfo, exploreInfo, investigateInfo, moveInfo, planInfo, relaxInfo, researchInfo, rescueInfo, seekInfo, waitInfo, restInfo, conflictInfo, shelprInfo, shelpmInfo, exploreacInfo, explorecInfo, explorehInfo, explorewInfo, meddleInfo, challengeInfo;
             
             function prepareActionInfos()
             {
@@ -634,6 +702,86 @@
                     <li>9-10: You find a physician with <i>Medicine<\/i> who can treat your Characters normally (see r310)<\/li>\
                     <li>11+: You find help. You may not choose this Action again in this Adventure.\
                     Medical specialist - He can use <i>Medicine<\/i> to treat your Characters and if in Near Future Era or later has drugs that can also treat radiation Wounds as a normal Wound.<\/li>\
+                <\/ul>";
+
+            exploreacInfo = "<h4>c007a. Explore Alien Culture<\/h4>\
+                           (A non-<i>Wilderness<\/i> Alien World) You decide to explore your surroundings and see what you can discover. This Action may only be chosen if the Enemy has not yet been revealed. Roll 2D6 and add +1 if your group contains a Time Lord and +1 for each Character with Brains 7+ (max +3). If you roll natural doubles, in addition to any result below, your group becomes randomly split afterwards (see r306e).\
+                <ul>\
+                    <li>2: You encounter an Enemy - roll for an Enemy event.<\/li>\
+                    <li>3: You become hopelessly lost - see e078 immediately.<\/li>\
+                    <li>4-5: Companion in trouble - see e002.<\/li>\
+                    <li>6-7: You discover nothing unusual. Gain +1 to further Explore Actions here if you have 2 <i>Aware<\/i>.<\/li>\
+                    <li>8: You meet someone - roll for a Character event. If you do not have <i>Aware<\/i> and the encountered Character is not Human then you have -1 to any Talk option (-2 if they have <i>Creature<\/i>).<\/li>\
+                    <li>9-10: You either discover clues that need Investigating - see r306d next turn if you wish OR make a successful Move Action next turn to roll for a Location event.<\/li>\
+                    <li>11: You discover something important - roll for a Plot event<\/li>\
+                    <li>12+: You discover something vital - see e082.<\/li>\
+                <\/ul>";
+
+            explorecInfo = "<h4>c007b. Explore Corridors<\/h4>\
+                            (Ship, Station, Resort or Base) You decide to explore the corridors to see what you can discover. This Action may only be chosen if the Enemy is not yet revealed. Roll 2D6 and add +1 (max 3) for each <i>Computers<\/i>. If you roll natural doubles, in addition to any result below, your group becomes randomly split afterwards (see r306e).\
+                <ul>\
+                    <li>2: You encounter an Enemy - roll for an Enemy event.<\/li>\
+                    <li>3-4: All these corridors look the same - roll 1D6: 1-2: e097; 3-6: e078.<\/li>\
+                    <li>5: Companion in trouble - see e002.<\/li>\
+                    <li>6-7: You discover nothing unusual.<\/li>\
+                    <li>8: You meet someone - roll for a Character event.<\/li>\
+                    <li>9-10: You either discover clues that need Investigating - see r306d next turn if you wish OR roll for a Location event immediately.<\/li>\
+                    <li>11: You discover something important - roll for a Plot event<\/li>\
+                    <li>12+: You discover something vital - see e082.<\/li>\
+                <\/ul>";
+
+            explorehInfo = "<h4>c007c. Explore History<\/h4>\
+                            (Earth Modern Era or earlier) You decide to explore the area and see what you can discover. This Action may only be chosen if the Enemy has not yet been revealed. Roll 2D6 and add +1 (max 3) for each <i>History<\/i>. If you roll natural doubles, in addition to any result below, your group becomes randomly split afterwards (see r306e).\
+                <ul>\
+                    <li>2: You encounter an Enemy - roll for an Enemy event.<\/li>\
+                    <li>3: Companion in trouble - see e002.<\/li>\
+                    <li>4-5: Find trouble - make a <i>History<\/i> 8 roll or see e059.<\/li>\
+                    <li>6-7: You discover nothing unusual.<\/li>\
+                    <li>8: You meet someone - roll for a Character event.<\/li>\
+                    <li>9-10: You either discover clues that need Investigating - see r306d next turn if you wish OR make a successful Move Action next turn to roll for a Location event. Add any <i>History<\/i> to either attempt.<\/li>\
+                    <li>11: You discover something important - roll for a Plot event<\/li>\
+                    <li>12+: You discover something vital - see e082.<\/li>\
+                <\/ul>";
+
+            explorewInfo = "<h4>c007d. Explore Wilderness<\/h4>\
+                            (<i>Wilderness<\/i>) You decide to explore the surrounding area to see what you can discover. This Action may only be chosen if the Enemy has not yet been revealed. Roll 2D6 and add +1 (max 3) for each <i>Tracking<\/i>. If you roll natural doubles, in addition to any result below, your group becomes randomly split afterwards (see r306e).\
+                <ul>\
+                    <li>2: You encounter an Enemy - roll for an Enemy event.<\/li>\
+                    <li>3: Attacked by hostile creature - e095<\/li>\
+                    <li>4-5: You become hopelessly lost - see e078 immediately.<\/li>\
+                    <li>6: The weather suddenly turns - see e079.<\/li>\
+                    <li>7: You discover nothing unusual.<\/li>\
+                    <li>8: Find secret path or tracks - +1 to further Explore Actions.<\/li>\
+                    <li>9-10: You either discover clues that need Investigating - see r306d next turn if you wish OR make a successful Move Action next turn to roll for a Location event.<\/li>\
+                    <li>11: You find somewhere - roll for a Location event<\/li>\
+                    <li>12+: You discover somewhere that could be important - see e082.<\/li>\
+                <\/ul>";
+
+            meddleInfo = "<h4>c007e. Meddle<\/h4>\
+                          (Any non-<i>Wilderness<\/i>) You decide to get yourself involved - always the best way to find out what's happening! This Action may only be chosen if the Enemy is not yet revealed and you have not had a Plot event. Roll 2D6 and add +1 per <i>Aware<\/i>, <i>History<\/i> (if on Earth in Modern Era or earlier) and +1 if a Companion is Curious (max +3). If you roll natural doubles and a Companion is involved in this Action, see e002 before result below.\
+                <ul>\
+                    <li>2-3: Your meddling is not welcomed - see e059.<\/li>\
+                    <li>4: Your meddling attracts the attention of the Enemy - roll for an Enemy event.<\/li>\
+                    <li>5-6: Your meddling has no effect.<\/li>\
+                    <li>7-8: You make a nuisance of yourself - have a Character event with -1 to any Talk or Surrender option.<\/li>\
+                    <li>9: Discover useful information - roll for Plot event.<\/li>\
+                    <li>10: You encounter someone - roll for a Character event<\/li>\
+                    <li>11: You stumble on the Enemy's plan - reveal the Enemy and roll for a Goal event.<\/li>\
+                    <li>12+: Your meddling attracts the attention of the Enemy - gain a +1DM but also roll for an Enemy event.<\/li>\
+                <\/ul>";
+
+            challengeInfo = "<h4>c007f. Challenge<\/h4>\
+                             You decide to confront the Enemy directly to discover their plans. This Action may only be chosen if you know the Enemy and they must have a Talk or Confront option. Only Characters with Bravery 8+ may attempt this Action. Roll 2D6 and add any <i>Domination<\/i>, <i>Gloating<\/i>, -2 unless you know the Goal, +1 if you can Oppose (max +3):\
+                <ul>\
+                    <li>2-3: Your challenge has failed - See the Surrender option of Enemy (you are attacked if none) and take a -1DM.<\/li>\
+                    <li>4: Your Enemy mocks you - All Allies will be -1 to Qualities in this Adventure.<\/li>\
+                    <li>5-6: Your threats are dismissed as empty - You may not attempt another Challenge Action in this Adventure.<\/li>\
+                    <li>7: Enemy unimpressed - No effect.<\/li>\
+                    <li>8: Enemy digests your words - Gain +1 to Challenge next turn.<\/li>\
+                    <li>9: Important information gleaned - Roll for a Goal event<\/li>\
+                    <li>10: Enemy unnerved - Gain +1DM.<\/li>\
+                    <li>11: Enemy cowed - Any captured Characters are released and gain +1DM<\/li>\
+                    <li>12+: Enemy deeply worried - Reveal Goal and they are -1 to all Qualities for the remainder of the Adventure.<\/li>\
                 <\/ul>";
             }
         </script>
